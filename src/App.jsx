@@ -1099,43 +1099,473 @@ function CustomiseScreen({ meal, onBack, onConfirm }) {
   );
 }
 
-function ShoppingListScreen({ plannedMeals }) {
-  const mealCount = Object.keys(plannedMeals).length;
+const ingredientCatalog = {
+  "Creamy Garlic Chicken Pasta": [
+    { section: "Produce", name: "Garlic", qty: "1 bulb", dayColor: "green" },
+    { section: "Produce", name: "Baby spinach", qty: "120g", dayColor: "green" },
+    { section: "Protein", name: "Chicken breast", qty: "2 pack (440g)", dayColor: "pink" },
+    { section: "Pantry & Cupboard", name: "Dried pasta", qty: "250g", dayColor: "amber" },
+    { section: "Pantry & Cupboard", name: "Garlic paste", qty: "1 tbsp", dayColor: "amber" },
+    { section: "Fridge & Dairy", name: "Parmesan", qty: "30g", dayColor: "blue" },
+    { section: "Fridge & Dairy", name: "Creme fraiche", qty: "100ml", dayColor: "blue" },
+  ],
+  "Teriyaki Salmon Rice Bowl": [
+    { section: "Produce", name: "Spring onions", qty: "1 bunch", dayColor: "green" },
+    { section: "Produce", name: "Broccoli", qty: "1 head", dayColor: "green" },
+    { section: "Protein", name: "Salmon fillets", qty: "2 x 140g", dayColor: "pink" },
+    { section: "Pantry & Cupboard", name: "Jasmine rice", qty: "250g", dayColor: "amber" },
+    { section: "Pantry & Cupboard", name: "Soy sauce", qty: "100ml", dayColor: "amber" },
+    { section: "Pantry & Cupboard", name: "Sesame oil", qty: "1 tbsp", dayColor: "amber" },
+  ],
+  "Chicken Tacos": [
+    { section: "Produce", name: "Lime", qty: "2", dayColor: "green" },
+    { section: "Produce", name: "Coriander", qty: "1 bunch", dayColor: "green" },
+    { section: "Protein", name: "Chicken breast", qty: "2 pack (440g)", dayColor: "pink" },
+    { section: "Pantry & Cupboard", name: "Taco seasoning", qty: "1 pack", dayColor: "amber" },
+    { section: "Fridge & Dairy", name: "Shredded cheese", qty: "100g", dayColor: "blue" },
+  ],
+  "Halloumi Fajita Pittas": [
+    { section: "Produce", name: "Mixed peppers", qty: "2", dayColor: "green" },
+    { section: "Produce", name: "Red onion", qty: "1", dayColor: "green" },
+    { section: "Produce", name: "Lettuce", qty: "1 bag", dayColor: "green" },
+    { section: "Protein", name: "Halloumi", qty: "225g", dayColor: "pink" },
+    { section: "Pantry & Cupboard", name: "Wholemeal pittas", qty: "1 pack", dayColor: "amber" },
+    { section: "Pantry & Cupboard", name: "Fajita seasoning", qty: "1 sachet", dayColor: "amber" },
+    { section: "Fridge & Dairy", name: "Greek yoghurt", qty: "150g", dayColor: "blue" },
+  ],
+  "Prawn Fried Rice": [
+    { section: "Produce", name: "Spring onions", qty: "1 bunch", dayColor: "green" },
+    { section: "Produce", name: "Frozen peas", qty: "200g", dayColor: "green" },
+    { section: "Protein", name: "King prawns", qty: "200g", dayColor: "pink" },
+    { section: "Protein", name: "Eggs", qty: "2", dayColor: "pink" },
+    { section: "Pantry & Cupboard", name: "Jasmine rice", qty: "250g", dayColor: "amber" },
+    { section: "Pantry & Cupboard", name: "Soy sauce", qty: "100ml", dayColor: "amber" },
+    { section: "Pantry & Cupboard", name: "Sesame oil", qty: "1 tbsp", dayColor: "amber" },
+  ],
+  "Harissa Chicken Couscous Bowl": [
+    { section: "Produce", name: "Cucumber", qty: "1", dayColor: "green" },
+    { section: "Produce", name: "Mixed salad", qty: "1 bag", dayColor: "green" },
+    { section: "Protein", name: "Chicken breast", qty: "440g", dayColor: "pink" },
+    { section: "Pantry & Cupboard", name: "Couscous", qty: "250g", dayColor: "amber" },
+    { section: "Pantry & Cupboard", name: "Harissa paste", qty: "1 jar", dayColor: "amber" },
+    { section: "Fridge & Dairy", name: "Greek yoghurt", qty: "150g", dayColor: "blue" },
+  ],
+  "Bean Chilli Wraps": [
+    { section: "Produce", name: "Lettuce", qty: "1 bag", dayColor: "green" },
+    { section: "Produce", name: "Tomato salsa", qty: "1 tub", dayColor: "green" },
+    { section: "Protein", name: "Mixed beans", qty: "2 tins", dayColor: "pink" },
+    { section: "Pantry & Cupboard", name: "Tortilla wraps", qty: "1 pack", dayColor: "amber" },
+    { section: "Pantry & Cupboard", name: "Chilli seasoning", qty: "1 sachet", dayColor: "amber" },
+    { section: "Fridge & Dairy", name: "Shredded cheese", qty: "100g", dayColor: "blue" },
+  ],
+  "Pesto Chicken Traybake": [
+    { section: "Produce", name: "Mixed peppers", qty: "2", dayColor: "green" },
+    { section: "Produce", name: "Baby potatoes", qty: "500g", dayColor: "green" },
+    { section: "Protein", name: "Chicken breast", qty: "440g", dayColor: "pink" },
+    { section: "Pantry & Cupboard", name: "Green pesto", qty: "1 jar", dayColor: "amber" },
+  ],
+};
+
+const sectionMeta = {
+  "Produce": { icon: "🌿", bg: "bg-green-100", pill: "bg-green-100 text-green-700" },
+  "Protein": { icon: "🍗", bg: "bg-pink-100", pill: "bg-pink-100 text-pink-700" },
+  "Pantry & Cupboard": { icon: "▣", bg: "bg-amber-100", pill: "bg-amber-100 text-amber-700" },
+  "Fridge & Dairy": { icon: "🥛", bg: "bg-blue-100", pill: "bg-blue-100 text-blue-700" },
+};
+
+const supermarketPrices = [
+  ["Tesco", "£14.80"],
+  ["Aldi", "£12.95"],
+  ["Sainsbury’s", "£15.60"],
+  ["Waitrose", "£18.20"],
+];
+
+const moneyToNumber = (value) => {
+  if (!value) return 0;
+  const cleaned = String(value).replace("£", "").replace("p", "").trim();
+  if (String(value).includes("p")) return Number(cleaned) / 100;
+  return Number(cleaned);
+};
+
+const formatMoney = (value) => `£${Math.max(value, 0).toFixed(2)}`;
+
+
+const parseQuantity = (qty) => {
+  const text = String(qty || "");
+  const gramsMatch = text.match(/(\d+(?:\.\d+)?)\s*g/i);
+  const mlMatch = text.match(/(\d+(?:\.\d+)?)\s*ml/i);
+  const tbspMatch = text.match(/(\d+(?:\.\d+)?)\s*tbsp/i);
+  const packMatch = text.match(/(\d+)\s*pack/i);
+  const leadingNumberMatch = text.match(/^(\d+(?:\.\d+)?)/);
+
+  if (gramsMatch) {
+    return { amount: Number(gramsMatch[1]), unit: "g", packs: packMatch ? Number(packMatch[1]) : null };
+  }
+  if (mlMatch) return { amount: Number(mlMatch[1]), unit: "ml", packs: null };
+  if (tbspMatch) return { amount: Number(tbspMatch[1]), unit: "tbsp", packs: null };
+  if (packMatch) return { amount: Number(packMatch[1]), unit: "pack", packs: Number(packMatch[1]) };
+  if (leadingNumberMatch) return { amount: Number(leadingNumberMatch[1]), unit: "each", packs: null };
+
+  return null;
+};
+
+const formatCombinedQuantity = (name, quantities) => {
+  const parsed = quantities.map(parseQuantity).filter(Boolean);
+  if (!parsed.length) return quantities[0] || "";
+
+  const units = [...new Set(parsed.map((item) => item.unit))];
+  if (units.length !== 1) return quantities.join(" + ");
+
+  const unit = units[0];
+  const total = parsed.reduce((sum, item) => sum + item.amount, 0);
+
+  if (unit === "g") {
+    const packs = parsed.reduce((sum, item) => sum + (item.packs || 0), 0);
+    if (name.toLowerCase().includes("chicken breast") && total === 880) return "880g (4 pack)";
+    return packs > 1 ? `${total}g (${packs} pack)` : `${total}g`;
+  }
+
+  if (unit === "ml") return `${total}ml`;
+  if (unit === "tbsp") return `${total} tbsp`;
+  if (unit === "pack") return `${total} pack${total === 1 ? "" : "s"}`;
+  if (unit === "each") return `${total}`;
+
+  return quantities.join(" + ");
+};
+
+const combineShoppingItems = (items) => {
+  const combined = new Map();
+
+  items.forEach((item) => {
+    const key = `${item.section}-${item.name}`;
+    const existing = combined.get(key);
+
+    if (!existing) {
+      combined.set(key, {
+        ...item,
+        days: [item.day],
+        quantities: [item.qty],
+        key,
+      });
+      return;
+    }
+
+    existing.days = [...new Set([...existing.days, item.day])];
+    existing.quantities.push(item.qty);
+    existing.qty = formatCombinedQuantity(item.name, existing.quantities);
+    existing.day = existing.days.join(", ");
+  });
+
+  return Array.from(combined.values()).map((item) => ({
+    ...item,
+    qty: formatCombinedQuantity(item.name, item.quantities || [item.qty]),
+    day: item.days ? item.days.join(", ") : item.day,
+  }));
+};
+
+
+function ShoppingListScreen({ plannedMeals, shoppingDay, mealDays, onBackToPlan, onJumpToDay }) {
+  const [checkedItems, setCheckedItems] = useState([]);
+  const [hideChecked, setHideChecked] = useState(false);
+  const [collapsedSections, setCollapsedSections] = useState({});
+  const [showPlanPicker, setShowPlanPicker] = useState(false);
+  const [showCheaper, setShowCheaper] = useState(false);
+  const [selectedAlternatives, setSelectedAlternatives] = useState({});
+  const [showSupermarkets, setShowSupermarkets] = useState(false);
+  const [selectedSupermarket, setSelectedSupermarket] = useState(supermarketPrices[0]);
+
+  const plannedEntries = Object.entries(plannedMeals);
+  const mealCount = plannedEntries.length;
+  const shoppingDateLabel = `${shoppingDay} 15 May`;
+
+  const cheaperAlternatives = [
+    { from: "Halloumi", to: "Own-brand grilling cheese", saving: "£1.20" },
+    { from: "King prawns", to: "Frozen prawns", saving: "£1.50" },
+    { from: "Jasmine rice", to: "Own-brand long grain rice", saving: "70p" },
+    { from: "Wholemeal pittas", to: "Own-brand pittas", saving: "45p" },
+    { from: "Parmesan", to: "Own-brand grated hard cheese", saving: "£1.10" },
+    { from: "Baby spinach", to: "Frozen spinach", saving: "80p" },
+    { from: "Dried pasta", to: "Own-brand pasta", saving: "70p" },
+  ];
+
+  const rawShoppingItems = plannedEntries.flatMap(([day, entry]) => {
+    const baseItems = ingredientCatalog[entry.meal.title] || [
+      { section: "Protein", name: "Chicken breast", qty: "440g", dayColor: "pink" },
+      { section: "Produce", name: "Mixed vegetables", qty: "1 pack", dayColor: "green" },
+      { section: "Pantry & Cupboard", name: "Seasoning", qty: "1 pack", dayColor: "amber" },
+    ];
+
+    return baseItems.map((item) => {
+      const swap = cheaperAlternatives.find((alternative) => alternative.from === item.name && selectedAlternatives[alternative.from]);
+      const displayName = swap ? swap.to : item.name;
+
+      return {
+        ...item,
+        name: displayName,
+        originalName: item.name,
+        day,
+        key: `${entry.meal.title}-${day}-${displayName}`,
+      };
+    });
+  });
+
+  const shoppingItems = combineShoppingItems(rawShoppingItems);
+
+  const groupedItems = shoppingItems.reduce((acc, item) => {
+    acc[item.section] = acc[item.section] || [];
+    acc[item.section].push(item);
+    return acc;
+  }, {});
+
+  const totalItems = shoppingItems.length;
+  const itemNamesInList = shoppingItems.map((item) => item.originalName || item.name);
+  const relevantAlternatives = cheaperAlternatives.filter((alternative) => itemNamesInList.includes(alternative.from));
+  const selectedSaving = relevantAlternatives.reduce((total, alternative) => {
+    return selectedAlternatives[alternative.from] ? total + moneyToNumber(alternative.saving) : total;
+  }, 0);
+  const adjustedSupermarketPrices = supermarketPrices.map(([name, price]) => [
+    name,
+    formatMoney(moneyToNumber(price) - selectedSaving),
+  ]);
+  const selectedTotal = formatMoney(moneyToNumber(selectedSupermarket[1]) - selectedSaving);
+
+  const toggleAlternative = (from) => {
+    setSelectedAlternatives((current) => ({ ...current, [from]: !current[from] }));
+  };
+
+  const toggleChecked = (key) => {
+    setCheckedItems((current) =>
+      current.includes(key) ? current.filter((item) => item !== key) : [...current, key]
+    );
+  };
+
+  const toggleSection = (section) => {
+    setCollapsedSections((current) => ({ ...current, [section]: !current[section] }));
+  };
+
+  const visibleItems = (items) =>
+    hideChecked ? items.filter((item) => !checkedItems.includes(item.key)) : items;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="absolute inset-0 bg-white z-30 px-6 pt-10 pb-6"
+      className="absolute inset-0 bg-white z-30 flex flex-col"
     >
-      <p className="text-sm text-purple-500 font-bold mb-2">Week complete</p>
-      <h1 className="text-4xl font-extrabold text-purple-950 leading-tight">
-        Your shopping list is ready
-      </h1>
-      <p className="text-purple-400 mt-3">
-        Built from {mealCount} planned meal{mealCount === 1 ? "" : "s"}.
-      </p>
-
-      <div className="mt-8 space-y-4">
-        {[
-          ["Protein", "Chicken breast, salmon fillets, Greek yoghurt"],
-          ["Carbs", "Rice, pasta, wraps"],
-          ["Veg", "Cucumber, edamame, spring onion, broccoli"],
-          ["Store cupboard", "Teriyaki sauce, garlic, herbs, sesame seeds"],
-        ].map(([section, items]) => (
-          <div key={section} className="bg-purple-50 rounded-3xl p-5">
-            <h2 className="text-xl font-bold text-purple-950">{section}</h2>
-            <p className="text-purple-500 mt-2">{items}</p>
+      <div className="px-4 sm:px-5 pt-7 sm:pt-9 pb-3 bg-white shrink-0">
+        <div className="relative flex items-center justify-center mb-4">
+          <div className="text-center">
+            <h1 className="text-2xl font-extrabold text-gray-950">Shopping list</h1>
+            <p className="text-gray-500 text-sm mt-1">For {shoppingDateLabel}</p>
           </div>
-        ))}
+
+          <div className="absolute right-0 flex gap-2">
+            <button
+              onClick={() => alert("Share link copied — prototype only")}
+              className="w-10 h-10 rounded-full bg-purple-50 shadow text-purple-700 font-bold"
+              aria-label="Share shopping list"
+            >
+              ⇪
+            </button>
+            <button
+              onClick={() => setShowPlanPicker(true)}
+              className="w-10 h-10 rounded-full bg-purple-50 shadow text-purple-700 font-bold"
+              aria-label="View or edit plan"
+            >
+              ⋯
+            </button>
+          </div>
+        </div>
+
+        <div className="border border-purple-100 rounded-3xl p-4 mb-4">
+          <div className="flex justify-between items-center mb-3">
+            <p className="font-extrabold text-gray-950">{mealCount} meal{mealCount === 1 ? "" : "s"} planned</p>
+            <button onClick={() => setShowPlanPicker(true)} className="text-purple-700 font-extrabold">View plan →</button>
+          </div>
+
+          <div className="flex gap-3 overflow-x-auto pb-1">
+            {plannedEntries.map(([day, entry]) => (
+              <div key={day} className="min-w-[112px] max-w-[112px] sm:min-w-[120px] sm:max-w-[120px]">
+                <div className="relative mb-2">
+                  <img src={entry.meal.image} alt={entry.meal.title} className="h-16 w-full rounded-2xl object-cover" />
+                  <span className="absolute -top-1 -left-1 bg-purple-700 text-white text-[10px] px-2 py-0.5 rounded-md font-bold">{day}</span>
+                </div>
+                <p className="font-extrabold text-xs leading-tight text-gray-950">{entry.meal.title}</p>
+                <p className="text-gray-500 text-xs mt-1">2 portions</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-[#F7F2FD] rounded-2xl px-4 py-3 text-xs text-gray-600 mb-4">
+          ✨ Quantities combined across your meals to save you time & money.
+        </div>
+
+        <div className="flex justify-between items-center gap-3">
+          <h2 className="text-2xl font-extrabold text-gray-950">{totalItems} items</h2>
+          <p className="text-xs text-gray-400">Grouped by aisle</p>
+          <button
+            onClick={() => setHideChecked((current) => !current)}
+            className={`px-3 py-2 rounded-full text-xs font-bold ${hideChecked ? "bg-purple-700 text-white" : "bg-purple-50 text-purple-700"}`}
+          >
+            {hideChecked ? "Show checked" : "Hide checked"}
+          </button>
+        </div>
       </div>
 
-      <button className="absolute left-6 right-6 bottom-6 bg-gradient-to-r from-purple-700 to-purple-500 text-white rounded-3xl py-5 font-bold text-xl">
-        Looks good — shop this list
-      </button>
+      <div className="flex-1 overflow-y-auto px-4 sm:px-5 pb-72">
+        <div className="space-y-5">
+          {Object.entries(groupedItems).map(([section, items]) => {
+            const meta = sectionMeta[section] || sectionMeta["Pantry & Cupboard"];
+            const shownItems = visibleItems(items);
+
+            return (
+              <div key={section}>
+                <button onClick={() => toggleSection(section)} className="w-full flex items-center gap-3 mb-2">
+                  <div className={`w-11 h-11 rounded-full ${meta.bg} flex items-center justify-center text-base`}>{meta.icon}</div>
+                  <h3 className="text-xl font-extrabold text-gray-950 flex-1 text-left">{section}</h3>
+                  <span className="bg-purple-50 text-purple-800 rounded-full px-3 py-1 text-sm font-bold">{items.length}</span>
+                  <span className="text-purple-700 font-bold">{collapsedSections[section] ? "⌄" : "⌃"}</span>
+                </button>
+
+                {!collapsedSections[section] && (
+                  <div className="ml-7 border-l border-purple-50 pl-5">
+                    {shownItems.map((item) => (
+                      <div key={item.key} className="flex items-center gap-3 py-2.5 border-b border-gray-100">
+                        <button
+                          onClick={() => toggleChecked(item.key)}
+                          className={`w-6 h-6 rounded-full border-2 shrink-0 ${checkedItems.includes(item.key) ? "bg-purple-700 border-purple-700 text-white" : "border-gray-300"}`}
+                        >
+                          {checkedItems.includes(item.key) ? "✓" : ""}
+                        </button>
+
+                        <p className={`font-bold text-sm flex-1 ${checkedItems.includes(item.key) ? "line-through text-gray-400" : "text-gray-950"}`}>{item.name}</p>
+
+                        <div className="text-right shrink-0">
+                          <p className="text-gray-500 text-xs">{item.qty}</p>
+                          <span className={`mt-1 inline-block ${meta.pill} px-2 py-0.5 rounded-full text-[11px] font-bold`}>{item.day}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="absolute left-0 right-0 bottom-0 bg-white px-4 sm:px-5 pt-3 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-[0_-10px_24px_rgba(255,255,255,0.96)]">
+        <div className="border border-purple-100 rounded-3xl p-4 flex justify-between items-center shadow-sm bg-white relative">
+          <button onClick={() => setShowSupermarkets((current) => !current)} className="text-left">
+            <p className="text-gray-500 text-xs font-bold">Estimated total ⓘ</p>
+            <p className="text-lg font-extrabold text-gray-950">{selectedTotal} at {selectedSupermarket[0]} <span className="ml-2">⌄</span></p>
+          </button>
+
+          <button onClick={() => setShowCheaper(true)} className="bg-purple-50 text-purple-700 px-4 py-3 rounded-2xl font-extrabold text-sm">Cheaper alternatives</button>
+
+          {showSupermarkets && (
+            <div className="absolute left-4 bottom-20 bg-white border border-purple-100 rounded-2xl shadow-xl p-2 w-48 z-50">
+              {adjustedSupermarketPrices.map((shop) => (
+                <button
+                  key={shop[0]}
+                  onClick={() => { setSelectedSupermarket(supermarketPrices.find(([name]) => name === shop[0]) || shop); setShowSupermarkets(false); }}
+                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-purple-50 text-sm font-bold"
+                >
+                  {shop[0]} — {shop[1]}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <button className="mt-4 w-full bg-gradient-to-r from-purple-700 to-fuchsia-500 text-white rounded-3xl py-4 font-extrabold text-lg">Start shopping</button>
+      </div>
+
+      <AnimatePresence>
+        {showPlanPicker && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-purple-950/25 z-50 flex items-end">
+            <motion.div initial={{ y: 260 }} animate={{ y: 0 }} exit={{ y: 260 }} className="bg-white rounded-t-[2rem] p-5 w-full">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <p className="text-sm text-purple-500 font-bold">Plan</p>
+                  <h2 className="text-2xl font-extrabold text-purple-950">Change a selection or share</h2>
+                </div>
+                <button onClick={() => setShowPlanPicker(false)} className="w-10 h-10 rounded-full bg-purple-50 text-purple-700 text-xl">×</button>
+              </div>
+
+              <div className="space-y-2 mb-4">
+                {mealDays.map((day, index) => (
+                  <button
+                    key={day}
+                    onClick={() => { setShowPlanPicker(false); onJumpToDay(index); }}
+                    className="w-full flex justify-between items-center bg-purple-50 rounded-2xl p-3 text-left"
+                  >
+                    <span className="font-bold text-purple-950">{dayLabels[day]}</span>
+                    <span className="text-sm text-purple-500">{plannedMeals[day]?.meal?.title || "No meal selected"}</span>
+                  </button>
+                ))}
+              </div>
+
+              <button className="w-full bg-purple-700 text-white rounded-2xl py-4 font-bold">Share shopping list</button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showCheaper && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-purple-950/25 z-50 flex items-end">
+            <motion.div initial={{ y: 260 }} animate={{ y: 0 }} exit={{ y: 260 }} className="bg-white rounded-t-[2rem] p-5 w-full">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <p className="text-sm text-purple-500 font-bold">Cheaper alternatives</p>
+                  <h2 className="text-2xl font-extrabold text-purple-950">Select swaps to apply</h2>
+                </div>
+                <button onClick={() => setShowCheaper(false)} className="w-10 h-10 rounded-full bg-purple-50 text-purple-700 text-xl">×</button>
+              </div>
+
+              <div className="space-y-3">
+                {relevantAlternatives.length === 0 ? (
+                  <div className="bg-purple-50 rounded-2xl p-4">
+                    <p className="font-bold text-purple-950">No cheaper swaps found for this shop yet.</p>
+                    <p className="text-purple-500 text-sm mt-1">This would be expanded with live supermarket data later.</p>
+                  </div>
+                ) : (
+                  relevantAlternatives.map((alternative) => (
+                    <button
+                      key={alternative.from}
+                      onClick={() => toggleAlternative(alternative.from)}
+                      className={`w-full rounded-2xl p-4 text-left border ${selectedAlternatives[alternative.from] ? "bg-purple-700 text-white border-purple-700" : "bg-purple-50 text-purple-950 border-purple-100"}`}
+                    >
+                      <div className="flex gap-3 items-start">
+                        <span className={`mt-1 w-5 h-5 rounded-full border flex items-center justify-center text-xs ${selectedAlternatives[alternative.from] ? "border-white" : "border-purple-300"}`}>
+                          {selectedAlternatives[alternative.from] ? "✓" : ""}
+                        </span>
+                        <div>
+                          <p className="font-bold">Swap {alternative.from} for {alternative.to}</p>
+                          <p className={`text-sm mt-1 ${selectedAlternatives[alternative.from] ? "text-purple-100" : "text-purple-500"}`}>Estimated saving: {alternative.saving}</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+
+              <button
+                onClick={() => setShowCheaper(false)}
+                className="mt-4 w-full bg-purple-700 text-white rounded-2xl py-4 font-bold"
+              >
+                Apply selected changes{selectedSaving > 0 ? ` — save ${formatMoney(selectedSaving)}` : ""}
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
+
 
 export default function App() {
   const [shoppingDay, setShoppingDay] = useState("Wed");
@@ -1230,8 +1660,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#eee7ff] flex justify-center items-start py-4">
-      <div className="w-[430px] h-[932px] bg-white rounded-[2rem] shadow-2xl overflow-hidden relative">
+    <div className="min-h-[100dvh] bg-[#eee7ff] flex justify-center items-start p-0 sm:px-4 sm:py-4">
+      <div className="w-full max-w-[430px] h-[100dvh] sm:h-[932px] bg-white rounded-none sm:rounded-[2rem] shadow-2xl overflow-hidden relative">
         {!planningStarted ? (
           <>
             <div className="bg-gradient-to-br from-purple-600 to-fuchsia-500 text-white px-6 pt-10 pb-8">
@@ -1522,7 +1952,17 @@ export default function App() {
 
         <AnimatePresence>
           {showShoppingList && (
-            <ShoppingListScreen plannedMeals={plannedMeals} />
+            <ShoppingListScreen
+              plannedMeals={plannedMeals}
+              shoppingDay={shoppingDay}
+              mealDays={mealDays}
+              onBackToPlan={() => setShowShoppingList(false)}
+              onJumpToDay={(index) => {
+                setShowShoppingList(false);
+                setCurrentDayIndex(index);
+                setShowDaySummary(false);
+              }}
+            />
           )}
         </AnimatePresence>
 
