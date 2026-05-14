@@ -1350,7 +1350,7 @@ function ShoppingListScreen({ plannedMeals, shoppingDay, mealDays, onBackToPlan,
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="absolute inset-0 bg-white z-30 overflow-y-auto"
+      className="absolute inset-0 bg-white z-30 overflow-y-auto overscroll-contain"
     >
       <div className="px-5 pt-7 pb-3 bg-white">
         <div className="relative flex items-center justify-center mb-4">
@@ -1413,7 +1413,7 @@ function ShoppingListScreen({ plannedMeals, shoppingDay, mealDays, onBackToPlan,
         </div>
       </div>
 
-      <div className="px-5 pb-6">
+      <div className="px-5 pb-4">
         <div className="space-y-5">
           {Object.entries(groupedItems).map(([section, items]) => {
             const meta = sectionMeta[section] || sectionMeta["Pantry & Cupboard"];
@@ -1455,7 +1455,7 @@ function ShoppingListScreen({ plannedMeals, shoppingDay, mealDays, onBackToPlan,
         </div>
       </div>
 
-      <div className="sticky bottom-0 bg-white px-5 pt-3 pb-[calc(env(safe-area-inset-bottom)+1rem)] shadow-[0_-10px_24px_rgba(255,255,255,0.96)] z-40">
+      <div className="bg-white px-5 pt-3 pb-10 z-40">
         <div className="border border-purple-100 rounded-3xl p-4 flex justify-between items-center shadow-sm bg-white relative">
           <button onClick={() => setShowSupermarkets((current) => !current)} className="text-left">
             <p className="text-gray-500 text-xs font-bold">Estimated total ⓘ</p>
