@@ -1350,9 +1350,9 @@ function ShoppingListScreen({ plannedMeals, shoppingDay, mealDays, onBackToPlan,
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="absolute inset-0 bg-white z-30 flex flex-col"
+      className="absolute inset-0 bg-white z-30 overflow-y-auto"
     >
-      <div className="px-5 pt-9 pb-3 bg-white shrink-0">
+      <div className="px-5 pt-7 pb-3 bg-white">
         <div className="relative flex items-center justify-center mb-4">
           <div className="text-center">
             <h1 className="text-2xl font-extrabold text-gray-950">Shopping list</h1>
@@ -1413,7 +1413,7 @@ function ShoppingListScreen({ plannedMeals, shoppingDay, mealDays, onBackToPlan,
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5 pb-64">
+      <div className="px-5 pb-6">
         <div className="space-y-5">
           {Object.entries(groupedItems).map(([section, items]) => {
             const meta = sectionMeta[section] || sectionMeta["Pantry & Cupboard"];
@@ -1455,7 +1455,7 @@ function ShoppingListScreen({ plannedMeals, shoppingDay, mealDays, onBackToPlan,
         </div>
       </div>
 
-      <div className="absolute left-0 right-0 bottom-0 bg-white px-5 pt-3 pb-[calc(env(safe-area-inset-bottom)+1rem)] shadow-[0_-10px_24px_rgba(255,255,255,0.96)] z-40">
+      <div className="sticky bottom-0 bg-white px-5 pt-3 pb-[calc(env(safe-area-inset-bottom)+1rem)] shadow-[0_-10px_24px_rgba(255,255,255,0.96)] z-40">
         <div className="border border-purple-100 rounded-3xl p-4 flex justify-between items-center shadow-sm bg-white relative">
           <button onClick={() => setShowSupermarkets((current) => !current)} className="text-left">
             <p className="text-gray-500 text-xs font-bold">Estimated total ⓘ</p>
@@ -1660,8 +1660,8 @@ export default function App() {
   };
 
   return (
-    <div className="h-[100dvh] bg-[#eee7ff] flex justify-center items-start p-0 sm:py-4">
-      <div className="w-full max-w-[430px] h-[100dvh] sm:h-[932px] sm:max-h-[calc(100dvh-2rem)] bg-white rounded-none sm:rounded-[2rem] shadow-2xl overflow-hidden relative">
+    <div className="min-h-screen bg-[#eee7ff] flex justify-center items-start py-4">
+      <div className="w-[430px] h-[932px] bg-white rounded-[2rem] shadow-2xl overflow-hidden relative">
         {!planningStarted ? (
           <>
             <div className="bg-gradient-to-br from-purple-600 to-fuchsia-500 text-white px-6 pt-10 pb-8">
