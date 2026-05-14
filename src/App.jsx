@@ -1352,7 +1352,7 @@ function ShoppingListScreen({ plannedMeals, shoppingDay, mealDays, onBackToPlan,
       animate={{ opacity: 1, y: 0 }}
       className="absolute inset-0 bg-white z-30 flex flex-col"
     >
-      <div className="px-4 sm:px-5 pt-7 sm:pt-9 pb-3 bg-white shrink-0">
+      <div className="px-5 pt-9 pb-3 bg-white shrink-0">
         <div className="relative flex items-center justify-center mb-4">
           <div className="text-center">
             <h1 className="text-2xl font-extrabold text-gray-950">Shopping list</h1>
@@ -1385,7 +1385,7 @@ function ShoppingListScreen({ plannedMeals, shoppingDay, mealDays, onBackToPlan,
 
           <div className="flex gap-3 overflow-x-auto pb-1">
             {plannedEntries.map(([day, entry]) => (
-              <div key={day} className="min-w-[112px] max-w-[112px] sm:min-w-[120px] sm:max-w-[120px]">
+              <div key={day} className="min-w-[120px] max-w-[120px]">
                 <div className="relative mb-2">
                   <img src={entry.meal.image} alt={entry.meal.title} className="h-16 w-full rounded-2xl object-cover" />
                   <span className="absolute -top-1 -left-1 bg-purple-700 text-white text-[10px] px-2 py-0.5 rounded-md font-bold">{day}</span>
@@ -1413,7 +1413,7 @@ function ShoppingListScreen({ plannedMeals, shoppingDay, mealDays, onBackToPlan,
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 sm:px-5 pb-72">
+      <div className="flex-1 overflow-y-auto px-5 pb-56">
         <div className="space-y-5">
           {Object.entries(groupedItems).map(([section, items]) => {
             const meta = sectionMeta[section] || sectionMeta["Pantry & Cupboard"];
@@ -1455,7 +1455,7 @@ function ShoppingListScreen({ plannedMeals, shoppingDay, mealDays, onBackToPlan,
         </div>
       </div>
 
-      <div className="absolute left-0 right-0 bottom-0 bg-white px-4 sm:px-5 pt-3 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-[0_-10px_24px_rgba(255,255,255,0.96)]">
+      <div className="absolute left-0 right-0 bottom-0 bg-white px-5 pt-3 pb-[calc(env(safe-area-inset-bottom)+1rem)] shadow-[0_-10px_24px_rgba(255,255,255,0.96)]">
         <div className="border border-purple-100 rounded-3xl p-4 flex justify-between items-center shadow-sm bg-white relative">
           <button onClick={() => setShowSupermarkets((current) => !current)} className="text-left">
             <p className="text-gray-500 text-xs font-bold">Estimated total ⓘ</p>
@@ -1479,7 +1479,7 @@ function ShoppingListScreen({ plannedMeals, shoppingDay, mealDays, onBackToPlan,
           )}
         </div>
 
-        <button className="mt-4 w-full bg-gradient-to-r from-purple-700 to-fuchsia-500 text-white rounded-3xl py-4 font-extrabold text-lg">Start shopping</button>
+        <button className="mt-3 w-full bg-gradient-to-r from-purple-700 to-fuchsia-500 text-white rounded-3xl py-3.5 font-extrabold text-base sm:text-lg">Start shopping</button>
       </div>
 
       <AnimatePresence>
@@ -1660,8 +1660,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-[#eee7ff] flex justify-center items-start p-0 sm:px-4 sm:py-4">
-      <div className="w-full max-w-[430px] h-[100dvh] sm:h-[932px] bg-white rounded-none sm:rounded-[2rem] shadow-2xl overflow-hidden relative">
+    <div className="min-h-[100dvh] bg-[#eee7ff] flex justify-center items-start sm:py-4">
+      <div className="w-full max-w-[430px] h-[100dvh] sm:h-[932px] bg-white sm:rounded-[2rem] shadow-2xl overflow-hidden relative">
         {!planningStarted ? (
           <>
             <div className="bg-gradient-to-br from-purple-600 to-fuchsia-500 text-white px-6 pt-10 pb-8">
